@@ -1,0 +1,86 @@
+#!/sbin/runscript
+
+# backward compatibility for existing gentoo layout 
+#
+if [ -d "/var/lib/acecoin/.acecoin" ]; then
+	ACECOIND_DEFAULT_DATADIR="/var/lib/acecoin/.acecoin"
+else
+	ACECOIND_DEFAULT_DATADIR="/var/lib/acecoind"
+fi
+
+ACECOIND_CONFIGFILE=${ACECOIND_CONFIGFILE:-/etc/acecoin/acecoin.conf}
+ACECOIND_PIDDIR=${ACECOIND_PIDDIR:-/var/run/acecoind}
+ACECOIND_PIDFILE=${ACECOIND_PIDFILE:-${ACECOIND_PIDDIR}/acecoind.pid}
+ACECOIND_DATADIR=${ACECOIND_DATADIR:-${ACECOIND_DEFAULT_DATADIR}}
+ACECOIND_USER=${ACECOIND_USER:-acecoin}
+ACECOIND_GROUP=${ACECOIND_GROUP:-acecoin}
+ACECOIND_BIN=${ACECOIND_BIN:-/usr/bin/acecoind}
+
+name="Acecoin Core Daemon"
+description="Acecoin crypto-currency p2p network daemon"
+
+command="/usr/bin/acecoind"
+command_args="-pid=\"${ACECOIND_PIDFILE}\" \
+		-conf=\"${ACECOIND_CONFIGFILE}\" \
+		-datadir=\"${ACECOIND_DATADIR}\" \
+		-daemon \
+		${ACECOIND_OPTS}"
+
+required_files="${ACECOIND_CONFIGFILE}"
+start_stop_daemon_args="-u ${ACECOIND_USER} \
+			-N ${ACECOIND_NICE:-0} -w 2000"
+pidfile="${ACECOIND_PIDFILE}"
+retry=60
+
+depend() {
+	need localmount net
+}
+
+# verify
+# 1) that the datadir exists and is writable (or create it)
+# 2) that a directory for the pid exists and is writable
+# 3) ownership and permissions on the config file
+start_pre() {
+	checkpath \
+	-d \
+	--mode 0750 \
+	--owner "${ACECOIND_USER}:${ACECOIND_GROUP}" \
+	"${ACECOIND_DATADIR}"
+
+	checkpath \
+	-d \
+	--mode 0755 \
+	--owner "${ACECOIND_USER}:${ACECOIND_GROUP}" \
+	"${ACECOIND_PIDDIR}"
+
+	checkpath -f \
+	-o ${ACECOIND_USER}:${ACECOIND_GROUP} \
+	-m 0660 \
+	${ACECOIND_CONFIGFILE}
+
+	checkconfig || return 1
+}
+
+checkconfig()
+{
+	if ! grep -qs '^rpcpassword=' "${ACECOIND_CONFIGFILE}" ; then
+		eerror ""
+		eerror "ERROR: You must set a secure rpcpassword to run acecoind."
+		eerror "The setting must appear in ${ACECOIND_CONFIGFILE}"
+		eerror ""
+		eerror "This password is security critical to securing wallets "
+		eerror "and must not be the same as the rpcuser setting."
+		eerror "You can generate a suitable random password using the following"
+		eerror "command from the shell:"
+		eerror ""
+		eerror "bash -c 'tr -dc a-zA-Z0-9 < /dev/urandom | head -c32 && echo'"
+		eerror ""
+		eerror "It is also recommended that you also set alertnotify so you are "
+		eerror "notified of problems:"
+		eerror ""
+		eerror "ie: alertnotify=echo %%s | mail -s \"Acecoin Alert\"" \
+			"admin@foo.com"
+		eerror ""
+		return 1
+	fi
+}
