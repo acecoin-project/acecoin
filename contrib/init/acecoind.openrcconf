@@ -1,0 +1,27 @@
+# /etc/conf.d/acecoind: config file for /etc/init.d/acecoind
+
+# Config file location
+#ACECOIND_CONFIGFILE="/etc/acecoin/acecoin.conf"
+
+# What directory to write pidfile to?  (created and owned by $ACECOIND_USER)
+#ACECOIND_PIDDIR="/var/run/acecoind"
+
+# What filename to give the pidfile
+#ACECOIND_PIDFILE="${ACECOIND_PIDDIR}/acecoind.pid"
+
+# Where to write acecoind data (be mindful that the blockchain is large)
+#ACECOIND_DATADIR="/var/lib/acecoind"
+
+# User and group to own acecoind process
+#ACECOIND_USER="acecoin"
+#ACECOIND_GROUP="acecoin"
+
+# Path to acecoind executable
+#ACECOIND_BIN="/usr/bin/acecoind"
+
+# Nice value to run acecoind under
+#ACECOIND_NICE=0
+
+# Additional options (avoid -conf and -datadir, use flags above)
+ACECOIND_OPTS=""
+
