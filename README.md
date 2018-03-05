@@ -3,8 +3,8 @@ Acecoin integration/staging tree
 
 https://github.com/acecoin-project/acecoin
 
-Copyright (c) 2009-2014 Bitcoin Developers
-Copyright (c) 2011-2014 Acecoin Developers
+Copyright (c) 2009-2017 Bitcoin Developers
+Copyright (c) 2011-2017 Acecoin Developers
 
 What is Acecoin?
 ----------------
@@ -12,11 +12,11 @@ What is Acecoin?
 Acecoin is a lite version of Bitcoin using scrypt as a proof-of-work algorithm.
  - 2.5 minute block targets
  - subsidy halves in 840k blocks (~4 years)
- - ~84 million total coins
+ - ~288 million total coins
  - 0 coins per block
 
 The rest is the same as Bitcoin.
- - 2016 blocks to retarget difficulty
+ - 2017 blocks to retarget difficulty
 
 For more information, as well as an immediately useable, binary version of
 the Acecoin client sofware, see https://github.com/acecoin-project/acecoin.
